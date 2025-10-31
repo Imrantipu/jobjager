@@ -8,6 +8,12 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791.svg)](https://www.postgresql.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+## 🚀 Live Demo
+
+- **Frontend**: [https://frontend-cueog3ryd-imrantipus-projects.vercel.app](https://frontend-cueog3ryd-imrantipus-projects.vercel.app)
+- **Backend API**: [https://jobjager-backend.onrender.com](https://jobjager-backend.onrender.com)
+- **API Documentation**: [https://jobjager-backend.onrender.com/api-docs](https://jobjager-backend.onrender.com/api-docs)
+
 ## 📋 Table of Contents
 
 - [Overview](#overview)
@@ -175,7 +181,7 @@ Users ──┬── CVs
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/jobjager.git
+   git clone https://github.com/Imrantipu/jobjager.git
    cd jobjager
    ```
 
@@ -339,10 +345,26 @@ cd frontend
 npm test
 ```
 
-### Current Test Coverage
+### Test Coverage Summary
 
-- Authentication Module: ✅ 14 tests
-- Additional modules: In development
+**137 tests passing** | 79.6% statement coverage
+
+| Module | Tests | Coverage |
+|--------|-------|----------|
+| Authentication | 14 tests | ~90% |
+| Applications | 22 tests | ~85% |
+| CVs | 22 tests | ~80% |
+| Jobs | 19 tests | ~80% |
+| Anschreiben | 24 tests | ~75% |
+| Middleware | 16 tests | ~85% |
+| Services | 20 tests | ~70% |
+
+**Test Statistics:**
+- Total Tests: 137 passing, 2 skipped
+- Statements: 79.6%
+- Branches: 66.5%
+- Functions: 73.4%
+- Lines: 80.3%
 
 ## 📦 Project Structure
 
@@ -421,19 +443,87 @@ chore: Maintenance tasks
 
 ## 🌐 Deployment
 
-### Backend Deployment (Render/Railway)
+### Current Deployment
 
-1. Set environment variables
-2. Configure PostgreSQL database
-3. Run migrations
-4. Deploy
+The application is deployed and live:
 
-### Frontend Deployment (Vercel)
+- **Backend**: Deployed on Render (Frankfurt region) with PostgreSQL database
+  - URL: https://jobjager-backend.onrender.com
+  - Database: PostgreSQL 16 (Render Free Tier)
+  - Auto-deploy from GitHub main branch
 
-1. Connect GitHub repository
-2. Configure build settings
-3. Set environment variables
-4. Deploy
+- **Frontend**: Deployed on Vercel
+  - URL: https://frontend-cueog3ryd-imrantipus-projects.vercel.app
+  - Auto-deploy from GitHub main branch
+
+### Deploy Your Own Instance
+
+#### Backend Deployment (Render)
+
+1. **Create PostgreSQL Database**
+   - Go to Render Dashboard
+   - Create new PostgreSQL database (Frankfurt region recommended)
+   - Copy internal database URL
+
+2. **Create Web Service**
+   - Connect GitHub repository
+   - Select `backend` directory as root
+   - Configure:
+     - Build Command: `npm install && npm run build && npx prisma generate && npx prisma migrate deploy`
+     - Start Command: `npm run start`
+     - Node Version: 18.x or higher
+
+3. **Set Environment Variables**
+   ```
+   PORT=5000
+   NODE_ENV=production
+   DATABASE_URL=<your-postgres-internal-url>
+   JWT_SECRET=<generate-secure-random-string>
+   JWT_EXPIRES_IN=7d
+   FRONTEND_URL=<your-vercel-frontend-url>
+   ANTHROPIC_API_KEY=<your-anthropic-api-key>
+   ```
+
+4. **Deploy**
+   - Render will automatically build and deploy
+   - Migrations run automatically on deployment
+
+#### Frontend Deployment (Vercel)
+
+1. **Install Vercel CLI**
+   ```bash
+   npm install -g vercel
+   ```
+
+2. **Login and Deploy**
+   ```bash
+   cd frontend
+   vercel login
+   vercel --prod
+   ```
+
+3. **Set Environment Variable**
+   ```bash
+   echo "https://your-backend.onrender.com/api" | vercel env add VITE_API_URL production
+   ```
+
+4. **Disable Deployment Protection** (Optional)
+   - Go to Project Settings → Deployment Protection
+   - Turn OFF "Vercel Authentication" for public access
+
+5. **Update Backend CORS**
+   - Update `FRONTEND_URL` in Render environment variables to match Vercel URL
+   - Redeploy backend
+
+### Deployment Notes
+
+- **Free Tier Limitations**:
+  - Render: Backend spins down after 15 min inactivity (50-second cold start)
+  - Vercel: Generous free tier with instant deployments
+
+- **Cost**: Both services offer free tiers suitable for portfolio projects
+
+- **Custom Domain**: Both Render and Vercel support custom domains on paid plans
 
 ## 🤝 Contributing
 
@@ -451,10 +541,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👤 Author
 
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your Profile](https://linkedin.com/in/yourprofile)
-- Email: your.email@example.com
+**Imran**
+- GitHub: [@Imrantipu](https://github.com/Imrantipu)
+- Portfolio: [Live Demo](https://frontend-cueog3ryd-imrantipus-projects.vercel.app)
 
 ## 🙏 Acknowledgments
 
@@ -466,21 +555,35 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 📈 Project Status
 
 - ✅ Backend API: Complete (41 endpoints)
-- ✅ Frontend: Complete (11 pages)
-- ✅ AI Integration: Complete
-- 🚧 Testing: In progress (13% coverage, target: 70%+)
-- 📅 Deployment: Planned
+- ✅ Frontend: Complete (11 pages, fully responsive)
+- ✅ AI Integration: Complete (Claude 3.5 Sonnet)
+- ✅ Testing: Complete (137 tests, 79.6% coverage)
+- ✅ Deployment: Live on Render + Vercel
+- ✅ Production Ready: Database, authentication, all core features working
 - 📅 PDF Export: Planned
+- 📅 Email Notifications: Planned
 
 ## 🎯 Roadmap
 
-- [ ] Complete test coverage (70%+)
+### Completed ✅
+- [x] Complete backend API (41 endpoints)
+- [x] Build responsive frontend (11 pages)
+- [x] Implement AI-powered Anschreiben generation
+- [x] Achieve 70%+ test coverage (79.6%)
+- [x] Deploy to production (Render + Vercel)
+
+### In Progress 🚧
+- [ ] Add ANTHROPIC_API_KEY to enable AI features in production
+
+### Planned 📅
 - [ ] PDF export for CVs and cover letters
-- [ ] Email notifications
-- [ ] Analytics dashboard with charts
-- [ ] Job board aggregation
-- [ ] Mobile application
-- [ ] Multi-language support (English/German)
+- [ ] Email notifications for follow-ups
+- [ ] Analytics dashboard with charts (Recharts)
+- [ ] Job board aggregation (Indeed, LinkedIn, StepStone)
+- [ ] Mobile-responsive improvements
+- [ ] Multi-language support (English/German toggle)
+- [ ] Interview preparation module
+- [ ] Document management system
 
 ---
 
