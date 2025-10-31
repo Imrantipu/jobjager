@@ -1,0 +1,159 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER MODEL
+// ============================================
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String   @map("password_hash")
+  firstName     String   @map("first_name")
+  lastName      String   @map("last_name")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  cvs           CV[]
+  jobs          Job[]
+  applications  Application[]
+  anschreiben   Anschreiben[]
+  companies     Company[]
+
+  @@map("users")
+}
+
+// ============================================
+// CV MODEL
+// ============================================
+model CV {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  title        String
+  personalInfo Json     @map("personal_info")
+  experience   Json
+  education    Json
+  skills       Json
+  languages    Json
+  isDefault    Boolean  @default(false) @map("is_default")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  applications Application[]
+
+  @@map("cvs")
+}
+
+// ============================================
+// JOB MODEL
+// ============================================
+model Job {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  companyName    String   @map("company_name")
+  positionTitle  String   @map("position_title")
+  jobDescription String?  @map("job_description") @db.Text
+  location       String?
+  salaryRange    String?  @map("salary_range")
+  techStack      String[] @map("tech_stack")
+  sourceUrl      String?  @map("source_url")
+  sourcePlatform String?  @map("source_platform")
+  isSaved        Boolean  @default(true) @map("is_saved")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  applications   Application[]
+
+  @@map("jobs")
+}
+
+// ============================================
+// APPLICATION MODEL
+// ============================================
+model Application {
+  id             String            @id @default(uuid())
+  userId         String            @map("user_id")
+  jobId          String            @map("job_id")
+  cvId           String?           @map("cv_id")
+  status         ApplicationStatus @default(TO_APPLY)
+  appliedDate    DateTime?         @map("applied_date")
+  followUpDate   DateTime?         @map("follow_up_date")
+  interviewDate  DateTime?         @map("interview_date")
+  notes          String?           @db.Text
+  contactPerson  String?           @map("contact_person")
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime          @updatedAt @map("updated_at")
+
+  // Relations
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job            Job               @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  cv             CV?               @relation(fields: [cvId], references: [id], onDelete: SetNull)
+  anschreiben    Anschreiben[]
+
+  @@map("applications")
+}
+
+// ============================================
+// ANSCHREIBEN (COVER LETTER) MODEL
+// ============================================
+model Anschreiben {
+  id            String       @id @default(uuid())
+  userId        String       @map("user_id")
+  applicationId String?      @map("application_id")
+  title         String
+  content       String       @db.Text
+  isTemplate    Boolean      @default(false) @map("is_template")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+
+  // Relations
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  application   Application? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+
+  @@map("anschreiben")
+}
+
+// ============================================
+// COMPANY MODEL
+// ============================================
+model Company {
+  id               String   @id @default(uuid())
+  userId           String   @map("user_id")
+  name             String
+  techStack        String[] @map("tech_stack")
+  cultureNotes     String?  @map("culture_notes") @db.Text
+  salaryInfo       String?  @map("salary_info")
+  glassdoorRating  Float?   @map("glassdoor_rating")
+  notes            String?  @db.Text
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("companies")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+enum ApplicationStatus {
+  TO_APPLY
+  APPLIED
+  INTERVIEW
+  OFFER
+  REJECTED
+}
